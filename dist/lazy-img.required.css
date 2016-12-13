@@ -1,0 +1,36 @@
+.c-js-breakpoint-hook {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+}
+
+@media (min-width: 992px) {
+  .c-js-breakpoint-hook {
+    width: 2px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .c-js-breakpoint-hook {
+    width: 3px;
+  }
+}
+
+.c-lazy-img {
+  display: block;
+}
+
+.c-lazy-img__inner {
+  position: relative;
+  display: block;
+}
+
+.c-lazy-img__img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}

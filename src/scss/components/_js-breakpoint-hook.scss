@@ -1,0 +1,12 @@
+.c-js-breakpoint-hook {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  
+  @include respond-to($screen-md) {
+    width: 2px;
+  }
+  @include respond-to($screen-lg) {
+    width: 3px;
+  }
+}

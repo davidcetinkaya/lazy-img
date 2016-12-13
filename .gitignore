@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log
+index.html
+style.css
+*.DS_Store
+index.js
+img

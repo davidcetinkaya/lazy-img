@@ -1,0 +1,11 @@
+@mixin respond-to($breakpoint, $direction:up) {
+  @if $direction == 'up' {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  } @elseif $direction == 'down' {
+    @media (max-width: $breakpoint - 1) {
+      @content;
+    }
+  }
+}
