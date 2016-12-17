@@ -1,4 +1,4 @@
-#LazyImage
+#LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master)
 
 [Check out the demo](https://codepen.io/DavidCetinkaya/full/WoEzvB/)
 
@@ -77,9 +77,7 @@ const lazyImg = LazyImg();
 lazyImg.init();
 ```
 
-##Settings
-
-HTML settings:
+##HTML settings
 
 `data-fluid` - boolean. Set to true for responsive image and false for fixed image size. `Optional`
 
@@ -103,7 +101,7 @@ HTML settings:
 
 `data-bg-img` - boolean. Only needed for CSS background images, which has to be set to true. `Optional`
 
-JavaScript settings:
+##JavaScript settings
 
 LazyImage accepts an object as an optional second parameter. Default settings are:
 
