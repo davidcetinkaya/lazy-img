@@ -2,7 +2,7 @@
 
 [Check out the demo](https://codepen.io/DavidCetinkaya/full/WoEzvB/)
 
-A minimal but powerful image lazy loader.
+A minimal, fast and powerful image lazy loader.
 
 Don't make requests for images unless you have to! Lazy image lets you load images as the user scrolls the page. Comes with customizable settings and source loading depending on media query.
 

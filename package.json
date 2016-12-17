@@ -1,7 +1,7 @@
 {
   "name": "lazy-img",
   "version": "1.0.1",
-  "description": "A minimal image lazy loader",
+  "description": "A minimal, fast and powerful image lazy loader",
   "author": "David Cetinkaya",
   "license": "MIT",
   "main": "index.js",
