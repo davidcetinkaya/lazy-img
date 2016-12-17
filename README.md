@@ -155,6 +155,7 @@ const lazyImage = LazyImg({
     this.style.opacity = 1;
   }
 });
+
 lazyImage.init();
 ```
 
@@ -167,6 +168,7 @@ const lazyImage = LazyImg({
     $(this).css('opacity', 1);
   }
 });
+
 lazyImage.init();
 ```
 
