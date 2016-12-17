@@ -8,7 +8,7 @@ Don't make requests for images unless you have to! Lazy image lets you load imag
 
 - Works on desktops, tablets and mobile phones.
 - Only 3.5k minified. ~1.5k with Gzip.
-- IE10+ compatible.
+- IE9+ compatible.
 - No library dependencies. Written in vanilla JS.
 - Load different image sources depending on media query (LG, MD and SM).
 - Also works with CSS background images.
