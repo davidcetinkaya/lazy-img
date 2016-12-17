@@ -73,8 +73,7 @@ Setup for a CSS background image:
 JavaScript:
 
 ```javascript
-const lazyImg = LazyImg();
-lazyImg.init();
+const lazyImage = LazyImg().init();
 ```
 
 ##HTML settings
