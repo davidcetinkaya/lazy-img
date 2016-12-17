@@ -103,7 +103,7 @@ lazyImg.init();
 
 ##JavaScript settings
 
-LazyImage accepts an object as an optional second parameter. Default settings are:
+LazyImage accepts an object as an optional parameter. Default settings are:
 
 ```javascript
 {
