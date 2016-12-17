@@ -137,8 +137,8 @@ function LazyImg(options) {
     for (let i = 0, count = elements.length; i < count; i++) {
       const item = {
         wrap: elements[i],
-        inner: getElement(elements[i], `\.${classes.inner}`),
-        img: getElement(elements[i], `\.${classes.img}`),
+        inner: getElement(elements[i], `.${classes.inner}`),
+        img: getElement(elements[i], `.${classes.img}`),
         hasLoadedAny: false,
         hasLoaded: {
           LG: false,
