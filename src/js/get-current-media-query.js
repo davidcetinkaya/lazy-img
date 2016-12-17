@@ -4,9 +4,9 @@ function GetCurrentMediaQuery() {
   
   const el = document.getElementById('js-breakpoint-hook'),
     queries = {
-        screenSM: false,
-        screenMD: false,
-        screenLG: false
+      screenSM: false,
+      screenMD: false,
+      screenLG: false
     };
 
   function init() {
