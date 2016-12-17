@@ -79,6 +79,8 @@ lazyImg.init();
 
 ##HTML settings
 
+`data-bg-img` - boolean. Only needed for CSS background images, which has to be set to true. `Optional`
+
 `data-fluid` - boolean. Set to true for responsive image and false for fixed image size. `Optional`
 
 `data-lg-src` – image source for LG screens. Will be used as backup if no other sources are provided. `Required`
@@ -98,8 +100,6 @@ lazyImg.init();
 `data-sm-height` – image max height in pixels for SM screens (used to generate placeholder for image). `Optional`
 
 `data-sm-width` – image max width in pixels for SM screens (used to generate placeholder for image). `Optional`
-
-`data-bg-img` - boolean. Only needed for CSS background images, which has to be set to true. `Optional`
 
 ##JavaScript settings
 
