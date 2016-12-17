@@ -1,4 +1,4 @@
-#LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master)
+#LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master) [![npm version](https://badge.fury.io/js/lazy-img.svg)](https://badge.fury.io/js/lazy-img)
 
 [Check out the demo](https://codepen.io/DavidCetinkaya/full/WoEzvB/)
 
