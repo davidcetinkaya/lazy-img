@@ -3,15 +3,15 @@ function LazyImg(options) {
   'use strict';
 
   // Global declarations
-  const mediaQueryGetter = GetCurrentMediaQuery(),
-    globals = {
+  const globals = {
       images: undefined,
       imgCount: 0,
       loadCount: 0,
       isScrollLooping: true,
+      mediaQueryGetter: GetCurrentMediaQuery(),
       lastMediaQuery: {
-        LG: mediaQueryGetter.queries.screenLG,
-        MD: mediaQueryGetter.queries.screenMD,
+        LG: false,
+        MD: false,
         SM: false
       }
     };
@@ -60,7 +60,7 @@ function LazyImg(options) {
   // Returns the current media query as a string.
   // Used to both load img src and set placeholders depending on media query.
   function getCurrentMediaQuery() {
-    const mq = mediaQueryGetter.queries;
+    const mq = globals.mediaQueryGetter.queries;
     return mq.screenLG ? 'LG' : mq.screenMD ? 'MD' : 'SM';
   }
 
@@ -123,15 +123,15 @@ function LazyImg(options) {
         const key = makeDataAttributeToCamelCase(attributes[attribute].name),
           value = attributes[attribute].value;
         
-        dataAttributes[key] = isNumeric(value) ? parseInt(value) : makeStringToBool(value);
+        dataAttributes[key] = isNumeric(value) ? parseFloat(value) : makeStringToBool(value);
       }
     }
     return dataAttributes;
   }
 
 
-  function cacheImages(elArray) {
-    const elements = elArray || getElement(document, `.${classes.wrap}`, true),
+  function cacheImages() {
+    const elements = getElement(document, `.${classes.wrap}`, true),
       images = [];
 
     for (let i = 0, count = elements.length; i < count; i++) {
@@ -236,7 +236,7 @@ function LazyImg(options) {
 
 
   const onWidthChange = Debounce(() => {
-      mediaQueryGetter.init();
+      globals.mediaQueryGetter.init();
       const currentMq = getCurrentMediaQuery();
 
       if (!globals.lastMediaQuery[currentMq]) {
@@ -265,7 +265,7 @@ function LazyImg(options) {
 
   return {
     init: () => { 
-      mediaQueryGetter.init();
+      globals.mediaQueryGetter.init();
       initialize(globals.isScrollLooping);
     },
     reInit: () => {
