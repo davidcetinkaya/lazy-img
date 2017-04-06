@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable import/no-extraneous-dependencies */
 
 /*
 |--------------------------------\
@@ -6,155 +6,126 @@
 |--------------------------------/
 */
 import gulp from 'gulp';
-import sass from 'gulp-sass';
-import babel from 'gulp-babel';
+import path from 'path';
 import clean from 'gulp-clean';
-import gulpif from 'gulp-if';
-import header from 'gulp-header';
-import eslint from 'gulp-eslint';
-import uglify from 'gulp-uglify';
-import concat from 'gulp-concat';
+import sequence from 'run-sequence';
 import rename from 'gulp-rename';
-import plumber from 'gulp-plumber';
+import gulpif from 'gulp-if';
+import autoprefixer from 'autoprefixer';
+import sass from 'gulp-sass';
+import postCss from 'gulp-postcss';
 import cleanCss from 'gulp-clean-css';
-import autoprefixer from 'gulp-autoprefixer';
 import sourcemaps from 'gulp-sourcemaps';
-import defineModule from 'gulp-define-module';
-import gulpSequence from 'gulp-sequence';
-import pkg from './package.json';
+import webpack from 'webpack-stream';
+import webpackConfig from './webpack.config.babel';
 import browserSync from 'browser-sync';
+import plumber from 'gulp-plumber';
+import server from './server.json';
 browserSync.create();
 
 
 /*
-|-----------------------\
-|  settings --> HEADER
-|-----------------------/
+|------------------------------------------\
+|  settings --> PATHS, BROWSERSYNC CONFIG
+|------------------------------------------/
 */
-const headerText = `/**
-  * LazyImg - <%= pkg.description %>
-  * v<%= pkg.version %> | <%= pkg.homepage %>
-  * Copyright <%= pkg.author %>
-  *
-  * <%= pkg.license %> license
-  */
-  `;
-
-
-/*
-|------------------------------\
-|  settings --> PATHS & FLAGS
-|------------------------------/
-*/
-const Paths = (() => {
-  const srcPath = './src',
-    distPath = './dist';
-
-  return {
-    ROOT: './',
-    OUT: distPath,
-    SASS_SRC: `${srcPath}/scss/**/*.scss`,
-    JS_SRC: `${srcPath}/js/*.js`
-  };
-})();
-
-
-const Flags = ((production) => {
-  return {
-    DEV: !production,
-    PROD: production
-  };
-})(process.env.NODE_ENV === 'production');
-
-
-/*
-|------------------\
-|  task --> CLEAN
-|------------------/
-*/
-gulp.task('clean', () => {
-  return gulp.src(`${Paths.OUT}/*`, { read: false })
-    .pipe(clean());
-});
-
-
-/*
-|---------------------\
-|  task --> BUILD JS
-|---------------------/
-*/
-gulp.task('build:js', () => {
-  return gulp.src(Paths.JS_SRC)
-    .pipe(plumber())
-    .pipe(gulpif(Flags.DEV, sourcemaps.init()))
-    .pipe(babel())
-    .pipe(concat('lazy-img.js'))
-    .pipe(gulpif(Flags.PROD, uglify({mangle: true})))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulpif(Flags.DEV, sourcemaps.write('.')))
-    .pipe(gulpif(Flags.PROD, header(headerText, {pkg : pkg})))
-    .pipe(gulp.dest(Paths.OUT))
-    .pipe(browserSync.stream());
-});
-
-
-/*
-|-------------------------\
-|  task --> BUILD NPM JS
-|-------------------------/
-*/
-gulp.task('build:npm-js', () => {
-  if (Flags.PROD) {
-    const wrapper = `function() {
-      <%= contents %>
-      return LazyImg;
-      }()`;
-
-    return gulp.src(Paths.JS_SRC)
-      .pipe(plumber())
-      .pipe(babel())
-      .pipe(concat('index.js'))
-      .pipe(defineModule('node', {wrapper: wrapper}))
-      .pipe(gulp.dest(Paths.ROOT))
-      .pipe(browserSync.stream());
-  }
-});
-
-
-/*
-|--------------------\
-|  task --> LINT JS
-|--------------------/
-*/
-gulp.task('lint:js', () => {
-  return gulp.src(Paths.JS_SRC)
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
+const PRODUCTION = process.env.npm_lifecycle_event === 'build';
+const Paths = {
+  OUT: 'dist',
+  JS_ENTRY: 'src/js/lazy-img.js',
+  JS_SRC: 'src/js/**/*.js',
+  JS_NPM: 'index.js',
+  SASS_ENTRY: 'src/scss/lazy-img.required.scss',
+  SASS_SRC: 'src/scss/**/*.scss',
+  HTML_SRC: ['*.html']
+};
+const BrowserSyncConfig = {
+  proxy: server.ROOT,
+  notify: false
+};
 
 
 /*
 |----------------------\
-|  task --> BUILD CSS
+|  task --> BUNDLE JS
 |----------------------/
 */
-gulp.task('build:css', () => {
-  return gulp.src(Paths.SASS_SRC)
+gulp.task('bundle:js', () =>
+  gulp.src(Paths.JS_ENTRY)
     .pipe(plumber())
-    .pipe(gulpif(Flags.DEV, sourcemaps.init()))
-    .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
-    .pipe(autoprefixer({
+    .pipe(webpack(webpackConfig))
+    .pipe(gulp.dest(Paths.OUT))
+    .pipe(browserSync.stream()));
+
+
+/*
+|--------------------------\
+|  task --> BUNDLE NPM JS
+|--------------------------/
+*/
+gulp.task('bundle:npmjs', () =>
+  gulp.src(Paths.JS_ENTRY)
+    .pipe(webpack(webpackConfig))
+    .pipe(gulp.dest(Paths.JS_NPM)));
+
+
+/*
+|------------------------\
+|  task --> BUNDLE SASS
+|------------------------/
+*/
+gulp.task('bundle:sass', () => {
+  const postCssProcessors = [
+    autoprefixer({
       browsers: [
-        'last 6 versions',
-        'ie 10-11',
+        'last 2 versions',
+        'ie 9-11',
         '> 5%'
-      ]
+      ],
+      remove: false
+    })
+  ];
+
+  return gulp.src([Paths.SASS_ENTRY])
+    .pipe(gulpif(!PRODUCTION, sourcemaps.init()))
+    .pipe(sass().on('error', sass.logError))
+    .pipe(postCss(postCssProcessors))
+    .pipe(gulpif(!PRODUCTION, sourcemaps.write()))
+    .pipe(cleanCss({
+      format: {
+        breaks: {
+          afterAtRule: true,
+          afterBlockBegins: true,
+          afterBlockEnds: true,
+          afterComment: true,
+          afterProperty: true,
+          afterRuleBegins: true,
+          afterRuleEnds: true,
+          beforeBlockEnds: true,
+          betweenSelectors: true
+        },
+        indentBy: 2,
+        indentWith: 'space',
+        spaces: {
+          aroundSelectorRelation: true,
+          beforeBlockBegins: true,
+          beforeValue: true
+        }
+      }
     }))
-    .pipe(gulpif(Flags.DEV, sourcemaps.write('.')))
     .pipe(gulp.dest(Paths.OUT))
     .pipe(browserSync.stream());
 });
+
+
+/*
+|------------------------\
+|  task --> RELOAD HTML
+|------------------------/
+*/
+gulp.task('reload:html', () =>
+  gulp.src(Paths.HTML_SRC)
+  .pipe(browserSync.stream()));
 
 
 /*
@@ -163,28 +134,35 @@ gulp.task('build:css', () => {
 |------------------------/
 */
 gulp.task('browserSync', () => {
-  Flags.DEV && browserSync.init({
-    server: {
-      baseDir: "./"
-    }
-  });
+  !PRODUCTION && browserSync.init(BrowserSyncConfig);
+});
+
+
+/*
+|-----------------------\
+|  task --> BUNDLE ALL
+|-----------------------/
+*/
+gulp.task('bundle', ['bundle:js', 'bundle:npmjs', 'bundle:sass'], () => {
+  if (!PRODUCTION) {
+    gulp.watch(Paths.JS_SRC, ['bundle:js']);
+    gulp.watch(Paths.SASS_SRC, ['bundle:sass']);
+    gulp.watch(Paths.HTML_SRC, ['reload:html']);
+  }
 });
 
 
 /*
 |------------------\
-|  task --> BUILD
+|  task --> CLEAN
 |------------------/
 */
-gulp.task('build', ['build:js', 'build:npm-js', 'build:css'], () => {
-  if (Flags.DEV) {
-    gulp.watch(Paths.JS_SRC, ['build:js']);
-    gulp.watch(Paths.SASS_SRC, ['build:css']);
-  }
-});
+gulp.task('clean', () => gulp.src(Paths.OUT, { read: false }).pipe(clean()));
 
-gulp.task('serve', gulpSequence('clean', 'build', 'browserSync'));
 
-gulp.task('lint', ['lint:js']);
-
-gulp.task('default', ['serve']);
+/*
+|--------------------\
+|  task --> DEFAULT
+|--------------------/
+*/
+gulp.task('default', sequence('clean', 'bundle', 'browserSync'));

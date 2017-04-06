@@ -1,4 +1,6 @@
-@import 'settings/_settings';
-@import 'tools/_respond-to';
-@import 'components/_js-breakpoint-hook';
-@import 'components/_lazy-img';
+@charset 'utf-8';
+
+@import 'components/breakpoints';
+@import 'components/respond-to';
+@import 'components/js-breakpoint-hook';
+@import 'components/lazy-img';

@@ -41,7 +41,7 @@ Setup for a regular image tag:
 ```html
 <figure class="c-lazy-img js-lazy-img">
   <div class="c-lazy-img__inner js-lazy-img__inner">
-    <img class="c-lazy-img__img js-lazy-img__img" 
+    <img class="c-lazy-img__img js-lazy-img__img"
       data-lg-src="img/image1.jpg"
       data-md-src="img/image2.jpg"
       data-sm-src="img/image3.jpg"
@@ -110,23 +110,23 @@ LazyImage accepts an object as an optional parameter. Default settings are:
   //Sets placeholders to prevent page jumping on image load.
   //Set to false if you prefer doing this from back-end.
   setPlaceHolders: true,
-  
+
   //Decides how intensely LazyImage should look for images in viewport.
   //Higher numbers will intensify number of checks per second while lower numbers will slow it down.
   scrollFrameRate: 3,
-  
+
   //Decides when an image should be loaded. LazyOffset is subtracted from image offset top. Pixels.
   //Can be used to load images before they're in view. A higher number will load the image earlier.
   lazyOffset: 300,
 
-  //Debounce amount for screen resize events to prevent too many events firing. Milliseconds. 
+  //Debounce amount for screen resize events to prevent too many events firing. Milliseconds.
   resizeDebounce: 300,
-  
+
   //Class name for JavaScript to pick up LazyImage elements.
   //Note that all added classes use the BEM naming convention.
   //Change the stylesheet according to this!
   classPrefix: 'lazy-img',
-  
+
   //Callback function, runs on image load.
   //Recieves the image itself as "this".
   onImgLoad: undefined
@@ -175,7 +175,3 @@ lazyImage.init();
 ##License
 
 [MIT license](http://opensource.org/licenses/MIT)
-
-
-
-

@@ -1,280 +1,245 @@
-/* exported LazyImg */
-function LazyImg(options) {
-  'use strict';
+// DEPENDENCIES
+import _throttle from 'lodash.throttle';
+import getCurrentMediaQuery from './getCurrentMediaQuery';
 
+// MAIN
+const lazyImg = (options) => {
   // Global declarations
-  const globals = {
-      images: undefined,
-      imgCount: 0,
-      loadCount: 0,
-      isScrollLooping: true,
-      mediaQueryGetter: GetCurrentMediaQuery(),
-      lastMediaQuery: {
-        LG: false,
-        MD: false,
-        SM: false
-      }
-    };
+  const GLOBALS = {
+    images: undefined,
+    scrollListener: undefined,
+    lastMediaQuery: undefined,
+    loadCount: 0,
+    getMediaQuery: getCurrentMediaQuery
+  };
 
 
   // Default options
-  const o = {
+  const OPTIONS = {
     setPlaceHolders: true,
-    scrollFrameRate: 3,
-    lazyOffset: 300,
-    resizeDebounce: 300,
+    checkInterval: 500,
+    lazyOffset: 0,
     classPrefix: 'lazy-img',
     onImgLoad: undefined
   };
 
 
   // Merge user options into defaults
-  options && mergeObjects(o, options);
+  Object.assign(OPTIONS, options);
 
 
   // Classes
-  const classes = {
-    wrap: `js-${o.classPrefix}`,
-    inner: `js-${o.classPrefix}__inner`,
-    img: `js-${o.classPrefix}__img`
+  const CLASSES = {
+    wrap: `js-${OPTIONS.classPrefix}`,
+    inner: `js-${OPTIONS.classPrefix}__inner`,
+    img: `js-${OPTIONS.classPrefix}__img`
   };
 
 
-  // Merge two objects into one
-  function mergeObjects(target, source) {
-    for (let key in source) {
-      if (source.hasOwnProperty(key)) {
-        target[key] = source[key];
+  function getElement(element, selector, selectAll) {
+    return element[`querySelector${(selectAll ? 'All' : '')}`](selector);
+  }
+
+
+  function getElementOffsetY(element, offsetY) {
+    return (element.getBoundingClientRect().top + offsetY) - OPTIONS.lazyOffset;
+  }
+
+
+  function isItemInView(offsetY) {
+    return triggerOffset => offsetY > triggerOffset;
+  }
+
+
+  function addEvent(element, event, func, bool) {
+    element.addEventListener(event, func, !!bool);
+    return { remove: () => element.removeEventListener(event, func, !!bool) };
+  }
+
+
+  function isNumeric(source) {
+    return !isNaN(parseFloat(source)) && isFinite(source);
+  }
+
+
+  function stringToBool(source) {
+    return source === 'true' ? true : source === 'false' ? false : source; // eslint-disable-line no-nested-ternary
+  }
+
+
+  function formatAttributeValue(source) {
+    return isNumeric(source) ? parseFloat(source) : stringToBool(source);
+  }
+
+
+  function isDataAttribute(attribute) {
+    return attribute && attribute.match(/^(data-.)/);
+  }
+
+
+  function dataAttrToCamelCase(dataAttribute) {
+    return dataAttribute.replace(/^(data-)/, '').replace(/(-\w)/g, match =>
+      match.replace('-', '').toUpperCase());
+  }
+
+
+  function forEachItem(array, callback, startIndex) {
+    for (let i = startIndex || 0; i < array.length; i += 1) {
+      const returnValue = callback(array[i], i);
+      if (returnValue) return returnValue;
+    }
+    return false;
+  }
+
+
+  function parseDataAttributes(attributes) {
+    const returnObject = {};
+    forEachItem(attributes, (attribute) => {
+      if (isDataAttribute(attribute.name)) {
+        returnObject[dataAttrToCamelCase(attribute.name)] = formatAttributeValue(attribute.value);
       }
-    }
-  }
-
-
-  function setObjectPropertyStates(obj, state) {
-    for (let prop in obj) {
-      obj[prop] = (state === prop.toString()) ? true : false;
-    }
-  }
-
-
-  // Returns the current media query as a string.
-  // Used to both load img src and set placeholders depending on media query.
-  function getCurrentMediaQuery() {
-    const mq = globals.mediaQueryGetter.queries;
-    return mq.screenLG ? 'LG' : mq.screenMD ? 'MD' : 'SM';
-  }
-
-
-  function getElement(el, selector, all) {
-    return el[`querySelector${(all ? 'All' : '')}`](selector);
-  }
-
-
-  function addEvent(el, event, func, bool) {
-    el.addEventListener(event, func, !!bool);
-
-    // Enable removing the event listener from anonymous function
-    return {
-      remove: () => removeEvent(el, event, func, bool)
-    };
-  }
-
-
-  function removeEvent(el, event, func, bool) {
-    el.removeEventListener(event, func, !!bool);
-  }
-
-
-  function isDataAttr(attr) {
-    return attr && attr.match(/^(data-.)/);
-  }
-
-
-  function isNumeric(obj) {
-    return !isNaN(parseFloat(obj)) && isFinite(obj);
-  }
-
-
-  function makeDataAttributeToCamelCase(attribute) {
-    return attribute.replace(/^(data-)/, '').replace(/(-\w)/g, (match) => {
-      return match.replace('-', '').toUpperCase();
     });
+    return returnObject;
   }
 
 
-  function makeStringToBool(obj) {
-    switch (obj) {
-      case 'true':
-        return true;
-      case 'false':
-        return false;
-    }
-    // Fallback: Return the passed string as it is.
-    return obj;
-  }
-
-
-  function getDataAttributes(el) {
-    const attributes = el.attributes,
-      dataAttributes = {};
-
-    for (let attribute in attributes) {
-      if (isDataAttr(attributes[attribute].name)) {
-        const key = makeDataAttributeToCamelCase(attributes[attribute].name),
-          value = attributes[attribute].value;
-        
-        dataAttributes[key] = isNumeric(value) ? parseFloat(value) : makeStringToBool(value);
-      }
-    }
-    return dataAttributes;
-  }
-
-
-  function cacheImages() {
-    const elements = getElement(document, `.${classes.wrap}`, true),
-      images = [];
-
-    for (let i = 0, count = elements.length; i < count; i++) {
+  function setupItems(elements) {
+    const returnArray = [];
+    forEachItem(elements, (element) => {
       const item = {
-        wrap: elements[i],
-        inner: getElement(elements[i], `.${classes.inner}`),
-        img: getElement(elements[i], `.${classes.img}`),
-        hasLoadedAny: false,
-        hasLoaded: {
-          LG: false,
-          MD: false,
-          SM: false
-        }
+        wrap: element,
+        inner: getElement(element, `.${CLASSES.inner}`),
+        img: getElement(element, `.${CLASSES.img}`)
       };
-      mergeObjects(item, getDataAttributes(item.img));
-      images.push(item);
+      returnArray.push(Object.assign(item, parseDataAttributes(item.img.attributes)));
+    });
+    return returnArray;
+  }
+
+
+  function setTriggerOffsets(items) {
+    const offsetY = window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    const setTriggerOffset = item =>
+      Object.assign(item, { triggerOffset: getElementOffsetY(item.img, offsetY) - windowHeight });
+    return items.map(setTriggerOffset).sort((a, b) => a.triggerOffset - b.triggerOffset);
+  }
+
+
+  function getSuitableSize(item, size, property) {
+    const queries = GLOBALS.getMediaQuery.queries;
+    return item[size + property] || forEachItem(queries, (query) => {
+      const backupSize = item[query + property];
+      return backupSize && backupSize;
+    }, queries.indexOf(size) + 1);
+  }
+
+
+  function setPlaceholders(items, mediaQuery) {
+    function createPlaceHolder(item) {
+      const width = getSuitableSize(item, mediaQuery, 'Width');
+      const height = getSuitableSize(item, mediaQuery, 'Height');
+      const wrap = item.wrap;
+      const inner = item.inner;
+      if (width && height) wrap.style[(item.fluid ? 'max-width' : 'width')] = `${width}px`;
+      if (OPTIONS.setPlaceHolders && inner) inner.style.paddingBottom = `${(height / width) * 100}%`;
     }
-    return images;
+    return items.forEach(createPlaceHolder) || items;
   }
 
 
-  function setImageOffsets() {
-    globals.images.forEach(item => {
-      item.offsetTop = Math.floor(item.img.getBoundingClientRect().top + window.pageYOffset);
+  function setLoadAndErrorListeners(item, img, size, callback) {
+    const events = ['load', 'error'];
+    const listeners = [];
+    forEachItem(events, (event) => {
+      listeners.push(addEvent(img, event, () => {
+        if (!item.hasLoaded) GLOBALS.loadCount += 1;
+        if (OPTIONS.onImgLoad) OPTIONS.onImgLoad(item.img, event === 'load');
+        if (callback) callback();
+        Object.assign(item, { hasLoaded: true });
+        listeners.forEach(({ remove }) => remove());
+      }));
     });
   }
 
 
-  function setImgPlaceholders() {
-    let mediaQuery = getCurrentMediaQuery().toLowerCase(),
-      height = 0,
-      width = 0;
+  function setItemSrc(item, size) {
+    const src = getSuitableSize(item, size, 'Src');
+    const testImage = document.createElement('img');
+    const image = item.img;
 
-    globals.images.forEach(item => {
-      width = item[`${mediaQuery}Width`] || item.mdWidth || item.lgWidth;
-      height = item[`${mediaQuery}Height`] || item.mdHeight || item.lgHeight;
-      item.wrap.style[(item.fluid ? 'max-width' : 'width')] = `${width}px`;
-      // Build image placeholders with the padding-bottom hack.
-      // Prevents page from jumping when images get loaded.
-      if (o.setPlaceHolders && !item.bgImg) item.inner.style.paddingBottom = `${height / width * 100}%`;
-    });
+    testImage.src = src;
+    if (item.bgImg) { image.style.backgroundImage = `url('${src}')`; } else { image.src = src; }
+    return callback => setLoadAndErrorListeners(item, testImage, size, callback);
   }
 
 
-  function setBackgroundImageSrc(item, src) {
-    item.style.backgroundImage = `url('${src}')`;
+  function storeItemsInView(items) {
+    const isInView = isItemInView(window.pageYOffset);
+    const returnArray = [];
+    return forEachItem(items, (item, i) => {
+      if (isInView(item.triggerOffset)) returnArray.push(item);
+      return (i === items.length - 1) && returnArray;
+    }, GLOBALS.loadCount);
   }
 
 
-  function setImgSrc(item, size) {
-    const src = item[`${size.toLowerCase()}Src`] || item.mdSrc || item.lgSrc,
-      img = !item.bgImg ? item.img : document.createElement('img');
+  function runLoadSequence(items) {
+    let counter = 0;
+    const mediaQuery = GLOBALS.lastMediaQuery;
+    const loadItem = item =>
+      item && setItemSrc(item, mediaQuery)((number => loadItem(items[number]))(counter += 1));
 
-      img.setAttribute('src', src);
-      item.bgImg && setBackgroundImageSrc(item.img, src);
-      o.onImgLoad && !item.hasLoadedAny && onImageLoad(item, img);
+    loadItem(items[counter]);
   }
 
 
-  function onImageLoad(item, img) {
-    const listener = addEvent(img, 'load', () => {
-      o.onImgLoad.call(item.img);
-      listener.remove();
-    });
-
-    item.hasLoadedAny = true;
-    globals.loadCount++;
-  }
-
-
-  function isImageInViewport(scrollOffset, force) {
-    const winBottomPosition = scrollOffset + window.innerHeight,
-      currentMq = getCurrentMediaQuery();
-
-    function isInScreen(item) {
-      return (winBottomPosition + o.lazyOffset) > item.offsetTop;
+  function loadItemsInView() {
+    const g = GLOBALS;
+    if (g.scrollListener && g.loadCount === g.items.length) {
+      g.scrollListener = g.scrollListener.remove();
+      return;
     }
-
-    globals.images.forEach(item => {
-      if (isInScreen(item) || force && !item.hasLoaded[currentMq]) {
-        setImgSrc(item, currentMq);
-        setObjectPropertyStates(item.hasLoaded, currentMq);
-      }
-    });
+    runLoadSequence(storeItemsInView(g.items));
   }
 
 
-  // Fake a scroll checker with recursive setTimouts.
-  function initScrollChecker() {
-    (function loop() {
-      isImageInViewport(window.pageYOffset);
-      // Kill scroll checker when every image has been loaded.
-      globals.loadCount === globals.imgCount && killScrollChecker();
-      globals.isScrollLooping && setTimeout(loop, 1000 / o.scrollFrameRate);
-    }());
-  }
+  function updateItems() {
+    const g = GLOBALS;
+    const mediaQuery = g.getMediaQuery.init();
 
-
-  function killScrollChecker() {
-    globals.isScrollLooping = false;
-  }
-
-
-  const onWidthChange = Debounce(() => {
-      globals.mediaQueryGetter.init();
-      const currentMq = getCurrentMediaQuery();
-
-      if (!globals.lastMediaQuery[currentMq]) {
-        setObjectPropertyStates(globals.lastMediaQuery, currentMq);
-        !globals.isScrollLooping && isImageInViewport(false, true);
-        initialize();
-      }
-  }, o.resizeDebounce);
-
-
-  function initialize(shouldInitScrollChecker) {
-    if (!globals.images) {
-      globals.images = cacheImages();
-      globals.imgCount = globals.images.length;
-      shouldInitScrollChecker && initScrollChecker();
-      
-      // Listen for resize events
-      addEvent(window, 'resize', onWidthChange);
-      addEvent(window, 'orientationchange', onWidthChange);
+    if (g.lastMediaQuery !== mediaQuery) {
+      g.lastMediaQuery = mediaQuery;
+      runLoadSequence(setPlaceholders(g.items, mediaQuery).filter(({ hasLoaded }) => hasLoaded));
     }
 
-    setImgPlaceholders();
-    globals.isScrollLooping && setImageOffsets();
+    if (g.scrollListener) {
+      g.items = setTriggerOffsets(g.items);
+      loadItemsInView();
+    }
+  }
+
+
+  function initialize(elements) {
+    const g = GLOBALS;
+    Object.assign(g, {
+      items: setupItems(elements),
+      scrollListener: g.scrollListener || addEvent(window, 'scroll', _throttle(loadItemsInView, OPTIONS.checkInterval, { leading: false }))
+    });
+    updateItems(g);
   }
 
 
   return {
-    init: () => { 
-      globals.mediaQueryGetter.init();
-      initialize(globals.isScrollLooping);
-    },
-    reInit: () => {
-      const shouldInitScrollChecker = !globals.isScrollLooping ? true : false;
-      globals.images = false;
-      globals.loadCount = 0;
-
-      if (!globals.isScrollLooping) globals.isScrollLooping = true;
-      initialize(shouldInitScrollChecker);
+    init: () => initialize(getElement(document, `.${CLASSES.wrap}`, true)),
+    update: () => updateItems(),
+    reInit: function reInitialize() {
+      Object.assign(GLOBALS, { lastMediaQuery: undefined, loadCount: 0 });
+      this.init();
     }
   };
-}
+};
+
+// EXPORT
+module.exports = lazyImg;
+

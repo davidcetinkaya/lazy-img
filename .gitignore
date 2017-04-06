@@ -1,7 +1,9 @@
 node_modules
 npm-debug.log
+server.json
 index.html
 style.css
 *.DS_Store
 index.js
 img
+dist

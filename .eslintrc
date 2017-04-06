@@ -1,33 +1,21 @@
 {
-  "rules": {
-    "quotes": [
-      2,
-      "single"
-    ],
-    "linebreak-style": [
-      2,
-      "unix"
-    ],
-    "semi": [
-      2,
-      "always"
-    ],
-    "no-unused-vars": [
-      2, 
-      {
-        "vars": "all", 
-        "args": "none"
-      }
-    ]
-  },
+  "parser": "babel-eslint",
   "env": {
-    "es6": true,
-    "browser": true,
+    "browser": true
+  },
+  "extends": "airbnb",
+  "rules": {
+    "import/named": "error",
+    "import/default": "error",
+    "comma-dangle": ["error", "never"]
   },
   "globals": {
-    "GetCurrentMediaQuery" : true,
-    "LazyImg" : true,
-    "Debounce" : true
   },
-  "extends": "eslint:recommended"
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.config.babel.js"
+      }
+    }
+  }
 }
