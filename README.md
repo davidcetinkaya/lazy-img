@@ -72,11 +72,13 @@ lazyImage.init();
 
 ## HTML settings
 
+Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. `data-lg-src` is required while other sources are optional. Other sources are applied like so: `data-*query*-src`.
+
 #### `data-bg-img`
-Boolean. Only needed for CSS background images, which has to be set to true. `Optional`
+Boolean. Only needed for CSS background images, which has to be set to true.
 
 #### `data-fluid`
-Boolean. Set to true for responsive image and false for fixed image size. `Optional`
+Boolean. Set to true for responsive image and false for fixed image size.
 
 #### `data-lg-src`
 String. Image source for LG screens. `Required`
