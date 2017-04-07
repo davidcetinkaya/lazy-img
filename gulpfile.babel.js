@@ -18,6 +18,7 @@ import cleanCss from 'gulp-clean-css';
 import sourcemaps from 'gulp-sourcemaps';
 import webpack from 'webpack-stream';
 import webpackConfig from './webpack.config.babel';
+import npmWebpackConfig from './webpack-npm.config.babel';
 import browserSync from 'browser-sync';
 import plumber from 'gulp-plumber';
 import server from './server.json';
@@ -65,8 +66,8 @@ gulp.task('bundle:js', () =>
 */
 gulp.task('bundle:npmjs', () =>
   gulp.src(Paths.JS_ENTRY)
-    .pipe(webpack(webpackConfig))
-    .pipe(gulp.dest(Paths.JS_NPM)));
+    .pipe(webpack(npmWebpackConfig))
+    .pipe(gulp.dest('./')));
 
 
 /*
@@ -157,7 +158,7 @@ gulp.task('bundle', ['bundle:js', 'bundle:npmjs', 'bundle:sass'], () => {
 |  task --> CLEAN
 |------------------/
 */
-gulp.task('clean', () => gulp.src(Paths.OUT, { read: false }).pipe(clean()));
+gulp.task('clean', () => gulp.src([Paths.OUT, Paths.JS_NPM], { read: false }).pipe(clean()));
 
 
 /*
