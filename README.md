@@ -72,15 +72,20 @@ lazyImage.init();
 
 ## HTML settings
 
-`data-bg-img` - Boolean. Only needed for CSS background images, which has to be set to true. `Optional`
+#### `data-bg-img`
+Boolean. Only needed for CSS background images, which has to be set to true. `Optional`
 
-`data-fluid` - Boolean. Set to true for responsive image and false for fixed image size. `Optional`
+#### `data-fluid`
+Boolean. Set to true for responsive image and false for fixed image size. `Optional`
 
-`data-lg-src` – String. Image source for LG screens. `Required`
+#### `data-lg-src`
+String. Image source for LG screens. `Required`
 
-`data-lg-width` – Floating point number. Image max width in pixels for LG screens (used to calculate placeholder size).
+#### `data-lg-width`
+Floating point number. Image max width in pixels for LG screens (used to calculate placeholder size).
 
-`data-lg-height` – Floating point number. Should be set in relation to data-lg-width for LazyImage to set image placeholder size with correct aspect ratio. (used to calculate placeholder size).
+#### `data-lg-height`
+Floating point number. Should be set in relation to data-lg-width for LazyImage to set image placeholder size with correct aspect ratio. (used to calculate placeholder size).
 
 
 
