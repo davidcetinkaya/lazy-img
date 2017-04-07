@@ -74,8 +74,6 @@ lazyImage.init();
 
 Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. Sources for media queries are applied like so: `data-*query*-src`. Note that `data-lg-src` is required while other sources are optional. Sizes for media queries follow the same principle: `data-*query*-width` and `data-*query*-height`.
 
-**See [examples](#examples) section for implementation.**
-
 #### `data-bg-img`
 Boolean. Only needed for CSS background images, which has to be set to true.
 
