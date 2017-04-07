@@ -9,7 +9,7 @@ Don't make requests for images unless you have to! Lazy image lets you load imag
 - Works on desktops, tablets and mobile phones.
 - Only 5.9k minified. ~2.5k with Gzip.
 - IE9+ compatible.
-- No library dependencies. Written in vanilla JS.
+- Written in vanilla JS.
 - Load different image sources depending on media query.
 - Also works with CSS background images.
 - Loads images in a sequence for great performance. 
@@ -17,8 +17,8 @@ Don't make requests for images unless you have to! Lazy image lets you load imag
 
 ## Install
 
-```
-npm install lazy-img
+```bash
+$ npm install lazy-img --save
 ```
 
 ## Kit
@@ -43,7 +43,7 @@ Setup for a regular image tag:
   <div class="c-lazy-img__inner js-lazy-img__inner">
     <img class="c-lazy-img__img js-lazy-img__img"
       src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-      data-lg-src="img/image1.jpg"
+      data-lg-src="img/image.jpg"
       data-lg-width="600"
       data-lg-height="300"
       data-fluid="true"
@@ -57,8 +57,7 @@ Setup for a CSS background image:
 ```html
 <div class="c-banner js-lazy-img">
   <div class="c-banner__img js-lazy-img__img"
-    data-lg-src="img/image1.jpg"
-    data-sm-src="img/image2.jpg"
+    data-lg-src="img/image.jpg"
     data-bg-img="true">
   </div>
 </div>
@@ -73,27 +72,17 @@ lazyImage.init();
 
 ## HTML settings
 
-`data-bg-img` - boolean. Only needed for CSS background images, which has to be set to true. `Optional`
+`data-bg-img` - Boolean. Only needed for CSS background images, which has to be set to true. `Optional`
 
-`data-fluid` - boolean. Set to true for responsive image and false for fixed image size. `Optional`
+`data-fluid` - Boolean. Set to true for responsive image and false for fixed image size. `Optional`
 
-`data-lg-src` – image source for LG screens. Will be used as backup if no other sources are provided. `Required`
+`data-lg-src` – String. Image source for LG screens. `Required`
 
-`data-md-src` – image source for MD screens. Will be used as backup for SM screens if SM source isn't provided. `Optional`
+`data-lg-width` – Floating point number. Image max width in pixels for LG screens (used to calculate placeholder size).
 
-`data-sm-src` – image source for SM screens. `Optional`
+`data-lg-height` – Floating point number. Should be set in relation to data-lg-width for LazyImage to set image placeholder size with correct aspect ratio. (used to calculate placeholder size).
 
-`data-lg-height` – image max height in pixels for LG screens (used to generate placeholder for image). `Optional`
 
-`data-lg-width` – image max width in pixels for LG screens (used to generate placeholder for image). `Optional`
-
-`data-md-height` – image max height in pixels for MD screens (used to generate placeholder for image). `Optional`
-
-`data-md-width` – image max width in pixels for MD screens (used to generate placeholder for image). `Optional`
-
-`data-sm-height` – image max height in pixels for SM screens (used to generate placeholder for image). `Optional`
-
-`data-sm-width` – image max width in pixels for SM screens (used to generate placeholder for image). `Optional`
 
 ## JavaScript settings
 
@@ -123,11 +112,13 @@ LazyImage accepts an object as an optional parameter. Default settings are:
 
 ```javascript
 //Initialize LazyImage.
-init();
+lazyImg.init();
 
-//Reinitialize LazyImage.
-//Useful when new images has been added to page dynamically.
-reInit();
+//Reinitialize LazyImage. Useful when new images has been added to page dynamically.
+lazyImg.reInit();
+
+//Update LazyImage. Use with window resize and orientationchange events.
+lazyImg.update();
 ```
 
 ## Examples
@@ -136,9 +127,9 @@ JavaScript:
 
 ```javascript
 const lazyImage = LazyImg({
-  lazyOffset: 400,
-  onImgLoad: function() {
-    this.style.opacity = 1;
+  lazyOffset: 100,
+  onImgLoad: (image) => {
+    image.style.opacity = 1;
   }
 });
 
@@ -149,10 +140,8 @@ JavaScript + jQuery:
 
 ```javascript     
 const lazyImage = LazyImg({
-  lazyOffset: 400,
-  onImgLoad: function() {
-    $(this).css('opacity', 1);
-  }
+  lazyOffset: 100,
+  onImgLoad: (image) => $(image).css('opacity', 1)
 });
 
 lazyImage.init();
