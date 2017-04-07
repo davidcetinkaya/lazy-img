@@ -1,3 +1,9 @@
+/*
+|------------\
+|  LAZY IMG
+|------------/
+*/
+
 // DEPENDENCIES
 import _throttle from 'lodash.throttle';
 import getCurrentMediaQuery from './getCurrentMediaQuery';

@@ -1,4 +1,4 @@
-#LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master) [![npm version](https://badge.fury.io/js/lazy-img.svg)](https://badge.fury.io/js/lazy-img)
+# LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master) [![npm version](https://badge.fury.io/js/lazy-img.svg)](https://badge.fury.io/js/lazy-img)
 
 [Check out the demo](https://codepen.io/DavidCetinkaya/full/WoEzvB/)
 
@@ -15,17 +15,17 @@ Don't make requests for images unless you have to! Lazy image lets you load imag
 - No page jumping on image load - sets placeholders for images not yet loaded.
 - Allows for callback function on image load.
 
-##Install
+## Install
 
 ```
 npm install lazy-img
 ```
 
-##Kit
-- **[lazy-img.min.js](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.min.js)** - production script
+## Kit
+- **[lazy-img.min.js](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.js)** - production script
 - **[lazy-img.required.css](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.required.css)** - required styles for proper functioning
 
-##Usage
+## Usage
 
 HTML markup:
 
@@ -42,15 +42,13 @@ Setup for a regular image tag:
 <figure class="c-lazy-img js-lazy-img">
   <div class="c-lazy-img__inner js-lazy-img__inner">
     <img class="c-lazy-img__img js-lazy-img__img"
+      src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
       data-lg-src="img/image1.jpg"
-      data-md-src="img/image2.jpg"
-      data-sm-src="img/image3.jpg"
+      data-sm-src="img/image2.jpg"
       data-lg-width="600"
       data-lg-height="300"
       data-md-width="400"
       data-md-height="200"
-      data-sm-width="200"
-      data-sm-height="100"
       data-fluid="true"
       alt="">
   </div>
@@ -63,8 +61,7 @@ Setup for a CSS background image:
 <div class="c-banner js-lazy-img">
   <div class="c-banner__img js-lazy-img__img"
     data-lg-src="img/image1.jpg"
-    data-md-src="img/image2.jpg"
-    data-sm-src="img/image3.jpg"
+    data-sm-src="img/image2.jpg"
     data-bg-img="true">
   </div>
 </div>
@@ -77,7 +74,7 @@ const lazyImage = LazyImg();
 lazyImage.init();
 ```
 
-##HTML settings
+## HTML settings
 
 `data-bg-img` - boolean. Only needed for CSS background images, which has to be set to true. `Optional`
 
@@ -133,7 +130,7 @@ LazyImage accepts an object as an optional parameter. Default settings are:
 }
 ```
 
-##API
+## API
 
 ```javascript
 //Initialize LazyImage.
@@ -144,7 +141,7 @@ init();
 reInit();
 ```
 
-##Examples
+## Examples
 
 JavaScript:
 
@@ -172,6 +169,6 @@ const lazyImage = LazyImg({
 lazyImage.init();
 ```
 
-##License
+## License
 
 [MIT license](http://opensource.org/licenses/MIT)
