@@ -72,7 +72,7 @@ lazyImage.init();
 
 ## HTML settings
 
-Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. `data-lg-src` is required while other sources are optional. Other sources are applied like so: `data-*query*-src`.
+Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. `data-lg-src` is required while other sources are optional. Other sources are applied like so: `data-*query*-src`. See [examples](#examples) for implementation.
 
 #### `data-bg-img`
 Boolean. Only needed for CSS background images, which has to be set to true.
@@ -128,7 +128,7 @@ lazyImg.reInit();
 lazyImg.update();
 ```
 
-## Examples
+## <a name="examples"></a>Examples
 
 JavaScript:
 
