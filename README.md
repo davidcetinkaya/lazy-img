@@ -72,7 +72,7 @@ lazyImage.init();
 
 ## HTML settings
 
-Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. Sources for media queries are applied like so: `data-<strong>query</strong>-src`. Note that `data-lg-src` is required while other sources are optional. Sizes for media queries follow the same principle: `data-__query__-width` and `data-__query__-height`.
+Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. Sources for media queries are applied like so: `data-*query*-src`. Note that `data-lg-src` is required while other sources are optional. Sizes for media queries follow the same principle: `data-*query*-width` and `data-*query*-height`.
 
 See [examples](#examples) section for implementation.
 
