@@ -72,7 +72,8 @@ lazyImage.init();
 
 ## HTML settings
 
-Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. `data-lg-src` is required while other sources are optional. Other sources are applied like so: `data-*query*-src`. See [examples](#examples) for implementation.
+Avaliable media queries are `xxs`, `xs`, `sm`, `md`, `lg`. Sources for media queries are applied like so: `data-**query**-src`. Note that `data-lg-src` is required while other sources are optional. Sizes for media queries follow the same principle: `data-**query**-width` and `data-**query**-height`.
+See [examples](#examples) section for implementation.
 
 #### `data-bg-img`
 Boolean. Only needed for CSS background images, which has to be set to true.
@@ -84,11 +85,10 @@ Boolean. Set to true for responsive image and false for fixed image size.
 String. Image source for LG screens. `Required`
 
 #### `data-lg-width`
-Floating point number. Image max width in pixels for LG screens (used to calculate placeholder size).
+Floating point number. Image max width in pixels for LG screens.
 
 #### `data-lg-height`
-Floating point number. Should be set in relation to data-lg-width for LazyImage to set image placeholder size with correct aspect ratio. (used to calculate placeholder size).
-
+Floating point number. Should be set in relation to `data-lg-width` for LazyImage to set image size with correct aspect ratio.
 
 
 ## JavaScript settings
