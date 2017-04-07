@@ -7,12 +7,12 @@ A minimal, fast and powerful image lazy loader.
 Don't make requests for images unless you have to! Lazy image lets you load images as the user scrolls the page. Comes with customizable settings and source loading depending on media query.
 
 - Works on desktops, tablets and mobile phones.
-- Only 3.5k minified. ~1.5k with Gzip.
+- Only 5.9k minified. ~2.5k with Gzip.
 - IE9+ compatible.
 - No library dependencies. Written in vanilla JS.
-- Load different image sources depending on media query (LG, MD and SM).
+- Load different image sources depending on media query.
 - Also works with CSS background images.
-- No page jumping on image load - sets placeholders for images not yet loaded.
+- Loads images in a sequence for great performance. 
 - Allows for callback function on image load.
 
 ## Install
@@ -22,7 +22,7 @@ npm install lazy-img
 ```
 
 ## Kit
-- **[lazy-img.min.js](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.js)** - production script
+- **[lazy-img.js](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.js)** - production script
 - **[lazy-img.required.css](https://raw.githubusercontent.com/davidcetinkaya/lazy-img/master/dist/lazy-img.required.css)** - required styles for proper functioning
 
 ## Usage
@@ -44,11 +44,8 @@ Setup for a regular image tag:
     <img class="c-lazy-img__img js-lazy-img__img"
       src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
       data-lg-src="img/image1.jpg"
-      data-sm-src="img/image2.jpg"
       data-lg-width="600"
       data-lg-height="300"
-      data-md-width="400"
-      data-md-height="200"
       data-fluid="true"
       alt="">
   </div>
@@ -98,34 +95,26 @@ lazyImage.init();
 
 `data-sm-width` – image max width in pixels for SM screens (used to generate placeholder for image). `Optional`
 
-##JavaScript settings
+## JavaScript settings
 
 LazyImage accepts an object as an optional parameter. Default settings are:
 
 ```javascript
 {
-  //Sets placeholders to prevent page jumping on image load.
-  //Set to false if you prefer doing this from back-end.
+  //Sets placeholders to prevent page jumping on image load. Boolean.
   setPlaceHolders: true,
 
-  //Decides how intensely LazyImage should look for images in viewport.
-  //Higher numbers will intensify number of checks per second while lower numbers will slow it down.
-  scrollFrameRate: 3,
+  //Decides how much checks for images in viewport should be throttled. Milliseconds.
+  checkInterval: 500,
 
-  //Decides when an image should be loaded. LazyOffset is subtracted from image offset top. Pixels.
-  //Can be used to load images before they're in view. A higher number will load the image earlier.
-  lazyOffset: 300,
+  //LazyOffset is subtracted from image offset top minus window height. Pixels.
+  lazyOffset: 0,
 
-  //Debounce amount for screen resize events to prevent too many events firing. Milliseconds.
-  resizeDebounce: 300,
-
-  //Class name for JavaScript to pick up LazyImage elements.
-  //Note that all added classes use the BEM naming convention.
-  //Change the stylesheet according to this!
+  //Class name for JavaScript to pick up LazyImage elements. Change the stylesheet according to this!
   classPrefix: 'lazy-img',
 
-  //Callback function, runs on image load.
-  //Recieves the image itself as "this".
+  //Callback function, runs on image load. Recieves two parameters. First is the loaded image element and the
+  //second is if the image loaded successfully or not. Function.
   onImgLoad: undefined
 }
 ```
