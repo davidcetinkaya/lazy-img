@@ -115,7 +115,8 @@ LazyImage accepts an object as an optional parameter. Default settings are:
   //Class name for JavaScript to pick up LazyImage elements. 
   classPrefix: 'js-lazy-img',
 
-  //Callback that runs on image load. Recieves two parameters: The loaded image element and a bool indicating if the image loaded successfully or not. Function.
+  //Callback that runs on image load. Recieves two parameters: 
+  //The loaded image element and a bool indicating if the image loaded successfully. Function.
   onImgLoad: undefined
 }
 ```
