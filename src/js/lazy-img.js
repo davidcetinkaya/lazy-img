@@ -25,7 +25,7 @@ const lazyImg = (options) => {
     setPlaceHolders: true,
     checkInterval: 500,
     lazyOffset: 0,
-    classPrefix: 'lazy-img',
+    classPrefix: 'js-lazy-img',
     onImgLoad: undefined
   };
 
@@ -36,9 +36,9 @@ const lazyImg = (options) => {
 
   // Classes
   const CLASSES = {
-    wrap: `js-${OPTIONS.classPrefix}`,
-    inner: `js-${OPTIONS.classPrefix}__inner`,
-    img: `js-${OPTIONS.classPrefix}__img`
+    wrap: `${OPTIONS.classPrefix}`,
+    inner: `${OPTIONS.classPrefix}__inner`,
+    img: `${OPTIONS.classPrefix}__img`
   };
 
 
@@ -230,8 +230,9 @@ const lazyImg = (options) => {
     const g = GLOBALS;
     Object.assign(g, {
       items: setupItems(elements),
-      scrollListener: g.scrollListener || addEvent(window, 'scroll', _throttle(loadItemsInView, OPTIONS.checkInterval, { leading: false }))
-    });
+      scrollListener: g.scrollListener || addEvent(window, 'scroll',
+        _throttle(loadItemsInView, OPTIONS.checkInterval, { leading: false })
+    ) });
     updateItems(g);
   }
 
