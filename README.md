@@ -112,7 +112,7 @@ LazyImage accepts an object as an optional parameter. Default settings are:
   //LazyOffset is subtracted from image offset top minus window height. Pixels.
   lazyOffset: 0,
 
-  //Class name for JavaScript to pick up LazyImage elements. 
+  //Class name for JavaScript to pick up LazyImage elements. String.
   classPrefix: 'js-lazy-img',
 
   //Callback that runs on image load. Recieves two parameters: 
