@@ -9,7 +9,6 @@ import gulp from 'gulp';
 import path from 'path';
 import clean from 'gulp-clean';
 import sequence from 'run-sequence';
-import rename from 'gulp-rename';
 import gulpif from 'gulp-if';
 import autoprefixer from 'autoprefixer';
 import sass from 'gulp-sass';

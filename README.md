@@ -4,16 +4,16 @@
 
 A minimal, fast and powerful image lazy loader.
 
-Don't make requests for images unless you have to! Lazy image lets you load images as the user scrolls the page. Comes with customizable settings and source loading depending on media query.
+Lazy image speeds up your webpage/application by loading images only as they enter the viewport. Comes with customizable settings and source loading depending on media query.
 
 - Works on desktops, tablets and mobile phones.
 - Only 5.9k minified. ~2.5k with Gzip.
 - IE9+ compatible.
 - Written in vanilla JS.
-- Load different image sources depending on media query.
-- Also works with CSS background images.
-- Loads images in a sequence for great performance. 
-- Allows for callback function on image load.
+- Load different image sources based on media queries.
+- Compatible with CSS background images.
+- Loads images in a sequence for great performance.
+- Allows for a callback function on image load.
 
 ## Install
 
@@ -72,7 +72,7 @@ lazyImage.init();
 
 ## HTML settings
 
-Sources for media queries are applied like so: `data-*query*-src`. Note that `data-lg-src` is required while other sources are optional. Placeholder sizes for media queries follow the same principle: `data-*query*-width` and `data-*query*-height`.
+LazyImage allows for different image sources and placeholder sizes based on media queries. Sources are applied like so: `data-*query*-src` while placeholder sizes are applied like so: `data-*query*-width` and `data-*query*-height`.
 
 Avaliable media queries are:
 - `xxs` min-width: **0px**
@@ -94,7 +94,7 @@ Floating point number. Should be set in relation to `data-lg-width` for LazyImag
 Boolean. Only needed for CSS background images, which has to be set to true.
 
 #### `data-fluid`
-Boolean. Set to true for responsive image and false for fixed image size.
+Boolean. Set to true for a responsive image and false for a fixed image size.
 
 
 ## JavaScript settings
