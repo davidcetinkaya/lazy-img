@@ -50,8 +50,12 @@
             
             /* Objects */
             .o-site-wrap {
-                max-width: 40.5rem;
+                max-width: 73.125rem;
                 margin: 0 auto;
+            }
+
+            .o-site-wrap--padding {
+                max-width: 76.125rem;
                 padding-right: 1.5rem;
                 padding-left: 1.5rem;
             }
@@ -79,6 +83,11 @@
             }
             
             /* Components */
+            .c-show-container {
+                max-width: 640px;
+                margin: 0 auto;
+            }
+
             .c-lazy-img__img {
                 opacity: 0;
                 -webkit-transition: opacity 0.5s;
@@ -158,9 +167,9 @@
     </head>
     
     <body>
-        <main class="c-page-content js-page-content" role="main" id="main">
-            <div class="o-site-wrap">
-                <article class="u-soft-ends-md">
+        <main role="main" id="main">
+            <div class="o-site-wrap o-site-wrap--padding">
+                <article class="c-show-container u-soft-ends-md">
                     <header class="u-text-center">
                         <ul class="o-bare-list o-gutter-bottom-sm">
                             <li class="o-gutter__item">
