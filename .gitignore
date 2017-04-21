@@ -6,3 +6,4 @@ style.css
 *.DS_Store
 index.js
 img
+!demo/img
