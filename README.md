@@ -1,10 +1,10 @@
 # LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master) [![npm version](https://badge.fury.io/js/lazy-img.svg)](https://badge.fury.io/js/lazy-img)
 
-[Check out the demo](https://output.jsbin.com/kiyuqag)
+[Check out the demo](https://davidcetinkaya.github.io/lazy-img/demo/main.html)
 
 A minimal, fast and powerful image lazy loader.
 
-Lazy image speeds up your webpage/application by loading images only as they enter the viewport. Comes with customizable settings and source loading depending on media query.
+Lazy image **speeds up your webpage/application** by loading images only as they enter the viewport. Comes with customizable settings and source loading depending on media query.
 
 - Works on desktops, tablets and mobile phones.
 - Only 5.9k minified. ~2.5k with Gzip.
