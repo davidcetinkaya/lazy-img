@@ -12,10 +12,11 @@ import getCurrentMediaQuery from './getCurrentMediaQuery';
 const lazyImg = (options) => {
   // Global declarations
   const GLOBALS = {
-    images: undefined,
+    items: undefined,
+    queueItems: undefined,
+    resizeItems: undefined,
     scrollListener: undefined,
     lastMediaQuery: undefined,
-    loadCount: 0,
     getMediaQuery: getCurrentMediaQuery
   };
 
@@ -141,6 +142,15 @@ const lazyImg = (options) => {
   }
 
 
+  function hasMultipleSizes(item) {
+    const properties = ['Width', 'Height', 'Src'];
+    return forEachItem(properties, (property) => {
+      const size = getSuitableSize(item, 'xxs', property);
+      return size && size !== item[`lg${property}`];
+    });
+  }
+
+
   function setPlaceholders(items, mediaQuery) {
     function createPlaceHolder(item) {
       const width = getSuitableSize(item, mediaQuery, 'Width');
@@ -150,19 +160,20 @@ const lazyImg = (options) => {
       if (width && height) wrap.style[(item.fluid ? 'max-width' : 'width')] = `${width}px`;
       if (OPTIONS.setPlaceHolders && inner) inner.style.paddingBottom = `${(height / width) * 100}%`;
     }
-    return items.forEach(createPlaceHolder) || items;
+    items.forEach(createPlaceHolder);
+    return items;
   }
 
 
   function setLoadAndErrorListeners(item, img, size, callback) {
+    const resizeItems = GLOBALS.resizeItems;
     const events = ['load', 'error'];
     const listeners = [];
     forEachItem(events, (event) => {
       listeners.push(addEvent(img, event, () => {
-        if (!item.hasLoaded) GLOBALS.loadCount += 1;
+        if (resizeItems.indexOf(item) === -1 && hasMultipleSizes(item)) resizeItems.push(item);
         if (OPTIONS.onImgLoad) OPTIONS.onImgLoad(item.img, event === 'load');
         if (callback) callback();
-        Object.assign(item, { hasLoaded: true });
         listeners.forEach(({ remove }) => remove());
       }));
     });
@@ -180,13 +191,13 @@ const lazyImg = (options) => {
   }
 
 
-  function storeItemsInView(items) {
+  function filterItemsInView(items) {
     const isInView = isItemInView(window.pageYOffset);
-    const returnArray = [];
-    return forEachItem(items, (item, i) => {
-      if (isInView(item.triggerOffset)) returnArray.push(item);
-      return (i === items.length - 1) && returnArray;
-    }, GLOBALS.loadCount);
+    const itemsToLoad = items.filter(item => isInView(item.triggerOffset));
+    const itemsToQueue = items.filter(item => itemsToLoad.indexOf(item) === -1);
+
+    if (itemsToQueue.length) Object.assign(GLOBALS, { queueItems: itemsToQueue });
+    return itemsToLoad;
   }
 
 
@@ -202,11 +213,11 @@ const lazyImg = (options) => {
 
   function loadItemsInView() {
     const g = GLOBALS;
-    if (g.scrollListener && g.loadCount === g.items.length) {
+    if (g.scrollListener && !g.queueItems.length) {
       g.scrollListener = g.scrollListener.remove();
       return;
     }
-    runLoadSequence(storeItemsInView(g.items));
+    runLoadSequence(filterItemsInView(g.queueItems));
   }
 
 
@@ -216,11 +227,12 @@ const lazyImg = (options) => {
 
     if (g.lastMediaQuery !== mediaQuery) {
       g.lastMediaQuery = mediaQuery;
-      runLoadSequence(setPlaceholders(g.items, mediaQuery).filter(({ hasLoaded }) => hasLoaded));
+      setPlaceholders(g.items, mediaQuery);
+      if (g.resizeItems.length) runLoadSequence(g.resizeItems);
     }
 
     if (g.scrollListener) {
-      g.items = setTriggerOffsets(g.items);
+      g.queueItems = setTriggerOffsets(g.queueItems);
       loadItemsInView();
     }
   }
@@ -228,11 +240,15 @@ const lazyImg = (options) => {
 
   function initialize(elements) {
     const g = GLOBALS;
+    const items = setupItems(elements);
     Object.assign(g, {
-      items: setupItems(elements),
+      items,
+      queueItems: items,
+      resizeItems: [],
       scrollListener: g.scrollListener || addEvent(window, 'scroll',
         _throttle(loadItemsInView, OPTIONS.checkInterval, { leading: false })
-    ) });
+      )
+    });
     updateItems(g);
   }
 
