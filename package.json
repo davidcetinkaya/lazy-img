@@ -1,6 +1,6 @@
 {
   "name": "lazy-img",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "A minimal, fast and powerful image lazy loader",
   "author": "David Cetinkaya",
   "license": "MIT",
