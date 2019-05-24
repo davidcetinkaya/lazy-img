@@ -1,3 +1,6 @@
+# DISCONTINUED
+I've decided to discontinue the development of this library to concentrate my efforts on other projects.
+
 # LazyImage ![Travis-ci](https://travis-ci.org/davidcetinkaya/lazy-img.svg?branch=master) [![npm version](https://badge.fury.io/js/lazy-img.svg)](https://badge.fury.io/js/lazy-img)
 
 [Check out the demo](https://davidcetinkaya.github.io/lazy-img/demo/main.html)
